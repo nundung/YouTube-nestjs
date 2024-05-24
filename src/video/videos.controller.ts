@@ -6,7 +6,7 @@ import { VideosService } from './videos.service';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
-@Controller('videos')
+@Controller('video')
 @UseGuards(AuthGuard())
 export class VideoController {
     private logger = new Logger('Videos');
