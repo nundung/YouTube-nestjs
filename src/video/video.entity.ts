@@ -7,7 +7,7 @@ export class Video extends BaseEntity {
     idx: number;
 
     @Column()
-    video: string;
+    file: string;
 
     @Column()
     title: string;
