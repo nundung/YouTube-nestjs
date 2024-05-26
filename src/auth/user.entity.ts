@@ -12,10 +12,10 @@ import {
 @Unique(['username'])
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: string;
 
     @Column()
-    username: string;
+    name: string;
 
     @Column()
     password: string;
