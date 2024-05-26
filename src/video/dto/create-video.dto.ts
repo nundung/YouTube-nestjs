@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateVideoDto {
     @IsNotEmpty()
-    file: string;
+    file_path: string;
 
     @IsNotEmpty()
     title: string;

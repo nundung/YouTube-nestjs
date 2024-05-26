@@ -1,13 +1,22 @@
+import { UUID } from 'crypto';
 import { User } from 'src/auth/user.entity';
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryColumn,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Video extends BaseEntity {
-    @PrimaryColumn()
-    idx: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
-    file: string;
+    file_path: string;
 
     @Column()
     title: string;
@@ -15,6 +24,7 @@ export class Video extends BaseEntity {
     @Column()
     description: string;
 
-    @ManyToOne((type) => User, (user) => user.videos, { eager: false })
+    @ManyToOne(() => User, (user) => user.videos, { eager: false })
+    @JoinColumn({ name: 'user_id' })
     user: User;
 }
