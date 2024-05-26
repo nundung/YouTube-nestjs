@@ -12,6 +12,6 @@ export class VideosService {
         createVideoDto: CreateVideoDto,
         user: User,
     ): Promise<Video> {
-        return this.videoRepository.CreateVideo(createVideoDto, user);
+        return this.videoRepository.createVideo(createVideoDto, user);
     }
 }
