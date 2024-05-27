@@ -18,7 +18,6 @@ export class AuthController {
 
     @Post('/signup')
     signUp(
-        console.log("tlfgod")
         @Body(ValidationPipe) authcredentialsDto: AuthCredentialsDto,
     ): Promise<void> {
         return this.authService.signUp(authcredentialsDto);
