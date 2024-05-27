@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-@Unique(['username'])
+@Unique(['name'])
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: string;
@@ -18,7 +18,7 @@ export class User extends BaseEntity {
     name: string;
 
     @Column()
-    password: string;
+    pw: string;
 
     @OneToMany((type) => Video, (video) => video.user, { eager: true })
     videos: Video[];
