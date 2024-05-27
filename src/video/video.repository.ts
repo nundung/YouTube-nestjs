@@ -14,6 +14,7 @@ export class VideoRepository extends Repository<Video> {
         user: User,
     ): Promise<Video> {
         const { file_path, title, description } = createVideoDto;
+
         const video = this.create({
             file_path,
             title,
