@@ -25,7 +25,7 @@ export class AuthService {
             where: { name: name },
         });
 
-        if (!user || !(await bcrypt.compare(pw, user.password))) {
+        if (!user || !(await bcrypt.compare(pw, user.pw))) {
             throw new UnauthorizedException('login failed');
         }
         const payload = { name };
