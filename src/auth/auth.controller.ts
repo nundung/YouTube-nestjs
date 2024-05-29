@@ -1,7 +1,9 @@
 import {
     Body,
     Controller,
+    Get,
     Post,
+    Put,
     Req,
     UseGuards,
     ValidationPipe,
@@ -34,5 +36,17 @@ export class AuthController {
     @UseGuards(AuthGuard())
     test(@GetUser() user: User) {
         console.log(user);
+    }
+
+    @Get('/info')
+    @UseGuards(AuthGuard())
+    getMyInfo(@GetUser() user: User) {
+        return user;
+    }
+
+    @Put('/info')
+    @UseGuards(AuthGuard())
+    updateMyInfo(@GetUser() user: User) {
+        return user;
     }
 }
