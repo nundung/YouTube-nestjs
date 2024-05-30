@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,37 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String       @id @default(uuid()) @db.Uuid
-  name        String       @unique
-  pw          String
-  created_at  DateTime   @default(now())
-  deleted_at  DateTime?
-  videos        Video[]
-  subscriptions Subscription[] @relation("subscriptions")
-  subscribers   Subscription[] @relation("subscribers")
+model subscription {
+  id                                         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                    String    @db.Uuid
+  subscribed_user_id                         String    @db.Uuid
+  created_at                                 DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at                                 DateTime? @db.Timestamp(6)
+  user_subscription_subscribed_user_idTouser user      @relation("subscription_subscribed_user_idTouser", fields: [subscribed_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_subscription_user_idTouser            user      @relation("subscription_user_idTouser", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Video {
-  id          String   @id @default(uuid()) @db.Uuid
-  user_id     String
-  file_path   String
-  title       String   @db.VarChar(100)
-  description String?  @db.Text
-  created_at  DateTime @default(now())
-  deleted_at  DateTime?
-
-  user User @relation(fields: [user_id], references: [id])
+model user {
+  id                                                 String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                                               String         @unique @db.VarChar(255)
+  pw                                                 String         @db.VarChar(255)
+  created_at                                         DateTime?      @default(now()) @db.Timestamp(6)
+  deleted_at                                         DateTime?      @db.Timestamp(6)
+  subscription_subscription_subscribed_user_idTouser subscription[] @relation("subscription_subscribed_user_idTouser")
+  subscription_subscription_user_idTouser            subscription[] @relation("subscription_user_idTouser")
+  video                                              video[]
 }
 
-model Subscription {
-  id            String   @id @default(uuid()) @db.Uuid
-  subscriberId  String
-  subscribedId  String
-  created_at    DateTime @default(now())
-
-  subscriber User @relation("subscriptions", fields: [subscriberId], references: [id])
-  subscribed User @relation("subscribers", fields: [subscribedId], references: [id])
-
-  @@unique([subscriberId, subscribedId])
+model video {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id     String    @db.Uuid
+  file_path   String    @db.VarChar(255)
+  title       String    @db.VarChar(255)
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at  DateTime? @db.Timestamp(6)
+  user        user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
