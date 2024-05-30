@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model subscription {
+  id                                         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                    String    @db.Uuid
+  subscribed_user_id                         String    @db.Uuid
+  created_at                                 DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at                                 DateTime? @db.Timestamp(6)
+  user_subscription_subscribed_user_idTouser user      @relation("subscription_subscribed_user_idTouser", fields: [subscribed_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_subscription_user_idTouser            user      @relation("subscription_user_idTouser", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user {
+  id                                                 String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                                               String         @unique @db.VarChar(255)
+  pw                                                 String         @db.VarChar(255)
+  created_at                                         DateTime?      @default(now()) @db.Timestamp(6)
+  deleted_at                                         DateTime?      @db.Timestamp(6)
+  subscription_subscription_subscribed_user_idTouser subscription[] @relation("subscription_subscribed_user_idTouser")
+  subscription_subscription_user_idTouser            subscription[] @relation("subscription_user_idTouser")
+  video                                              video[]
+}
+
+model video {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id     String    @db.Uuid
+  file_path   String    @db.VarChar(255)
+  title       String    @db.VarChar(255)
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  deleted_at  DateTime? @db.Timestamp(6)
+  user        user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
