@@ -1,41 +1,15 @@
 import * as bcrypt from 'bcryptjs';
-import { User } from './user.entity';
 import { PrismaClient } from '@prisma/client';
-import { DataSource, Repository } from 'typeorm';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import {
     ConflictException,
     Injectable,
     InternalServerErrorException,
 } from '@nestjs/common';
+import { User } from './user.entity';
+import { SubscriptionDto } from './dto/subscription.dto';
 
 const prisma = new PrismaClient();
-
-// @Injectable()
-// export class UserRepository extends Repository<User> {
-//     constructor(private dataSource: DataSource) {
-//         super(User, dataSource.createEntityManager());
-//     }
-//     async createUser(authCredentialDto: AuthCredentialDto): Promise<void> {
-//         const { name, pw } = authCredentialDto;
-
-//         const salt = await bcrypt.genSalt();
-//         const hashedPassword = await bcrypt.hash(pw, salt);
-//         const user = this.create({ name, pw: hashedPassword });
-
-//         try {
-//             await this.save(user);
-//         } catch (error) {
-//             if (error.code === '23505') {
-//                 throw new ConflictException('Existing username');
-//             } else {
-//                 throw new InternalServerErrorException();
-//             }
-//         }
-//         await this.save(user);
-//         return;
-//     }
-// }
 
 @Injectable()
 export class UserRepository {
@@ -59,5 +33,25 @@ export class UserRepository {
                 throw new InternalServerErrorException();
             }
         }
+    }
+
+    async findUserByName(name: string): Promise<any> {
+        const user = await prisma.user.findUnique({
+            where: {
+                name,
+            },
+        });
+        return user;
+    }
+
+    async subscribe(user: User, subscribeDto: SubscriptionDto): Promise<void> {
+        const { id } = user;
+        const { subscribedUserId } = subscribeDto;
+        await prisma.subscription.create({
+            data: {
+                user_id: id,
+                subscribed_user_id: subscribedUserId,
+            },
+        });
     }
 }
