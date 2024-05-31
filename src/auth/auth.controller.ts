@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Post,
     Put,
@@ -11,8 +12,9 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
 import { User } from './user.entity';
-import { AuthCredentialsDto } from './auth-credential.dto';
+import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthService } from './auth.service';
+import { SubscriptionDto } from './dto/subscription.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,22 +22,16 @@ export class AuthController {
 
     @Post('/signup')
     signUp(
-        @Body(ValidationPipe) authcredentialsDto: AuthCredentialsDto,
+        @Body(ValidationPipe) authcredentialsDto: AuthCredentialDto,
     ): Promise<void> {
         return this.authService.signUp(authcredentialsDto);
     }
 
     @Post('signin')
     signIn(
-        @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
+        @Body(ValidationPipe) authCredentialsDto: AuthCredentialDto,
     ): Promise<{ accessToken: string }> {
         return this.authService.signIn(authCredentialsDto);
-    }
-
-    @Post('/test')
-    @UseGuards(AuthGuard())
-    test(@GetUser() user: User) {
-        console.log(user);
     }
 
     @Get('/info')
@@ -48,5 +44,23 @@ export class AuthController {
     @UseGuards(AuthGuard())
     updateMyInfo(@GetUser() user: User) {
         return user;
+    }
+
+    @Post('/subscribe')
+    @UseGuards(AuthGuard())
+    async subscribe(
+        @GetUser() user: User,
+        @Body(ValidationPipe) subscribeDto: SubscriptionDto,
+    ) {
+        return await this.authService.subscribe(user, subscribeDto);
+    }
+
+    @Delete('/subscribe')
+    @UseGuards(AuthGuard())
+    async subscribe(
+        @GetUser() user: User,
+        @Body(ValidationPipe) subscribeDto: SubscriptionDto,
+    ) {
+        return await this.authService.subscribe(user, subscribeDto);
     }
 }
