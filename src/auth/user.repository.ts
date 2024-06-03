@@ -1,54 +1,25 @@
 import * as bcrypt from 'bcryptjs';
-import { User } from './user.entity';
 import { PrismaClient } from '@prisma/client';
-import { DataSource, Repository } from 'typeorm';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import {
     ConflictException,
     Injectable,
     InternalServerErrorException,
 } from '@nestjs/common';
+import { CreateUserDao } from './dao/create-user.dao';
+import { SubscriptionDao } from './dao/subscription.dao';
 
 const prisma = new PrismaClient();
 
-// @Injectable()
-// export class UserRepository extends Repository<User> {
-//     constructor(private dataSource: DataSource) {
-//         super(User, dataSource.createEntityManager());
-//     }
-//     async createUser(authCredentialDto: AuthCredentialDto): Promise<void> {
-//         const { name, pw } = authCredentialDto;
-
-//         const salt = await bcrypt.genSalt();
-//         const hashedPassword = await bcrypt.hash(pw, salt);
-//         const user = this.create({ name, pw: hashedPassword });
-
-//         try {
-//             await this.save(user);
-//         } catch (error) {
-//             if (error.code === '23505') {
-//                 throw new ConflictException('Existing username');
-//             } else {
-//                 throw new InternalServerErrorException();
-//             }
-//         }
-//         await this.save(user);
-//         return;
-//     }
-// }
-
 @Injectable()
 export class UserRepository {
-    async createUser(authCredentialDto: AuthCredentialDto): Promise<void> {
-        const { name, pw } = authCredentialDto;
-
+    async createUser(createUserDao: CreateUserDao): Promise<void> {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(pw, salt);
-
+        const hashedPassword = await bcrypt.hash(createUserDao.pw, salt);
         try {
             await prisma.user.create({
                 data: {
-                    name,
+                    name: createUserDao.name,
                     pw: hashedPassword,
                 },
             });
@@ -59,5 +30,35 @@ export class UserRepository {
                 throw new InternalServerErrorException();
             }
         }
+    }
+
+    async findUserByName(name: string): Promise<any> {
+        const user = await prisma.user.findUnique({
+            where: {
+                name,
+            },
+        });
+        return user;
+    }
+
+    async subscribe(subscriptionDao: SubscriptionDao): Promise<void> {
+        await prisma.subscription.create({
+            data: {
+                user_id: subscriptionDao.id,
+                subscribed_user_id: subscriptionDao.subscribedUserId,
+            },
+        });
+    }
+
+    async unSubscribe(SubscriptionDao: SubscriptionDao): Promise<void> {
+        const now = new Date();
+        await prisma.subscription.update({
+            where: {
+                id: SubscriptionDao.id,
+            },
+            data: {
+                deleted_at: now,
+            },
+        });
     }
 }

@@ -19,12 +19,12 @@ const jwtConfig = config.get('jwt');
             secret: process.env.JWT_SECRET || jwtConfig.secret,
             signOptions: { expiresIn: jwtConfig.expiresIn },
         }),
-        // TypeOrmModule.forRoot(typeORMConfig),
+        TypeOrmModule.forRoot(typeORMConfig),
         TypeOrmModule.forFeature([User]),
         TypeOrmModule.forFeature([UserRepository]),
     ],
     controllers: [AuthController],
-    exports: [JwtStrategy, PassportModule],
+    exports: [JwtStrategy, PassportModule, UserRepository, AuthService],
     providers: [AuthService, JwtStrategy, UserRepository],
 })
 export class AuthModule {}

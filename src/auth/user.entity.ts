@@ -22,4 +22,10 @@ export class User extends BaseEntity {
 
     @OneToMany((type) => Video, (video) => video.user, { eager: true })
     videos: Video[];
+
+    @Column()
+    created_at: Date;
+
+    @Column()
+    deleted_at: Date;
 }
