@@ -6,23 +6,20 @@ import {
     Injectable,
     InternalServerErrorException,
 } from '@nestjs/common';
-import { User } from './user.entity';
-import { SubscriptionDto } from './dto/subscription.dto';
+import { CreateUserDao } from './dao/create-user.dao';
+import { SubscriptionDao } from './dao/subscription.dao';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UserRepository {
-    async createUser(authCredentialDto: AuthCredentialDto): Promise<void> {
-        const { name, pw } = authCredentialDto;
-
+    async createUser(createUserDao: CreateUserDao): Promise<void> {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(pw, salt);
-
+        const hashedPassword = await bcrypt.hash(createUserDao.pw, salt);
         try {
             await prisma.user.create({
                 data: {
-                    name,
+                    name: createUserDao.name,
                     pw: hashedPassword,
                 },
             });
@@ -44,13 +41,23 @@ export class UserRepository {
         return user;
     }
 
-    async subscribe(user: User, subscribeDto: SubscriptionDto): Promise<void> {
-        const { id } = user;
-        const { subscribedUserId } = subscribeDto;
+    async subscribe(subscriptionDao: SubscriptionDao): Promise<void> {
         await prisma.subscription.create({
             data: {
-                user_id: id,
-                subscribed_user_id: subscribedUserId,
+                user_id: subscriptionDao.id,
+                subscribed_user_id: subscriptionDao.subscribedUserId,
+            },
+        });
+    }
+
+    async unSubscribe(SubscriptionDao: SubscriptionDao): Promise<void> {
+        const now = new Date();
+        await prisma.subscription.update({
+            where: {
+                id: SubscriptionDao.id,
+            },
+            data: {
+                deleted_at: now,
             },
         });
     }
