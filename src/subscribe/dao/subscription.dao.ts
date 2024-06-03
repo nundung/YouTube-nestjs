@@ -1,10 +1,10 @@
 export class SubscriptionDao {
-    id: string;
+    userId: string;
 
     subscribedUserId: string;
 
-    constructor(id: string, subscribedUserId: string) {
-        this.id = id;
+    constructor(userId: string, subscribedUserId: string) {
+        this.userId = userId;
         this.subscribedUserId = subscribedUserId;
     }
 }
