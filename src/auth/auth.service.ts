@@ -13,8 +13,11 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
-    async signUp(authCredentialsDto: AuthCredentialDto): Promise<void> {
-        return this.userRepository.createUser(authCredentialsDto);
+    async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
+        return this.userRepository.createUser({
+            name: authCredentialDto.name,
+            pw: authCredentialDto.pw,
+        });
     }
 
     async signIn(
@@ -22,17 +25,31 @@ export class AuthService {
     ): Promise<{ accessToken: string }> {
         const { name, pw } = authCredentialDto;
         const user = await this.userRepository.findUserByName(name);
-        console.log(user);
         if (!user || !(await bcrypt.compare(pw, user.pw))) {
             throw new UnauthorizedException('login failed');
         }
         const payload = { name };
         const accessToken = this.jwtService.sign(payload);
-
         return { accessToken };
     }
 
-    async subscribe(user: User, subscribeDto: SubscriptionDto): Promise<void> {
-        return await this.userRepository.subscribe(user, subscribeDto);
+    async subscribe(
+        id: string,
+        subscriptionDto: SubscriptionDto,
+    ): Promise<void> {
+        return await this.userRepository.subscribe({
+            id: id,
+            subscribedUserId: subscriptionDto.subscribedUserId,
+        });
+    }
+
+    async unSubscribe(
+        id: string,
+        subscriptionDto: SubscriptionDto,
+    ): Promise<void> {
+        return await this.userRepository.unSubscribe({
+            id: id,
+            subscribedUserId: subscriptionDto.subscribedUserId,
+        });
     }
 }
