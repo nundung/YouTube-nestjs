@@ -50,17 +50,17 @@ export class AuthController {
     @UseGuards(AuthGuard())
     async subscribe(
         @GetUser() user: User,
-        @Body(ValidationPipe) subscribeDto: SubscriptionDto,
+        @Body(ValidationPipe) subscriptionDto: SubscriptionDto,
     ) {
-        return await this.authService.subscribe(user, subscribeDto);
+        return await this.authService.subscribe(user.id, subscriptionDto);
     }
 
     @Delete('/subscribe')
     @UseGuards(AuthGuard())
-    async subscribe(
+    async unSubscribe(
         @GetUser() user: User,
-        @Body(ValidationPipe) subscribeDto: SubscriptionDto,
+        @Body(ValidationPipe) subscriptionDto: SubscriptionDto,
     ) {
-        return await this.authService.subscribe(user, subscribeDto);
+        return await this.authService.unSubscribe(user.id, subscriptionDto);
     }
 }
