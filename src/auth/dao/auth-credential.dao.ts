@@ -1,9 +1,13 @@
 export class AuthCredentialDao {
     id: string;
 
-    constructor(id: string) {
-        this.id = id;
-    }
+    name: string;
 
-    validateCr;
+    pw: string;
+
+    constructor(id: string, name: string, pw: string) {
+        this.id = id;
+        this.name = name;
+        this.pw = pw;
+    }
 }
