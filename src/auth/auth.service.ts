@@ -3,8 +3,6 @@ import * as bcrypt from 'bcryptjs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
-import { SubscriptionDto } from './dto/subscription.dto';
-import { User } from './user.entity';
 
 @Injectable()
 export class AuthService {
@@ -31,25 +29,5 @@ export class AuthService {
         const payload = { name };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
-    }
-
-    async subscribe(
-        id: string,
-        subscriptionDto: SubscriptionDto,
-    ): Promise<void> {
-        return await this.userRepository.subscribe({
-            id: id,
-            subscribedUserId: subscriptionDto.subscribedUserId,
-        });
-    }
-
-    async unSubscribe(
-        id: string,
-        subscriptionDto: SubscriptionDto,
-    ): Promise<void> {
-        return await this.userRepository.unSubscribe({
-            id: id,
-            subscribedUserId: subscriptionDto.subscribedUserId,
-        });
     }
 }
