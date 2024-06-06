@@ -1,30 +1,20 @@
-import { UUID } from 'crypto';
-import { User } from 'src/auth/user.entity';
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryColumn,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { UserEntity } from 'src/auth/user.entity';
 
-@Entity()
-export class Video extends BaseEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class VideoEntity {
+    public id: string;
+    public user_id: string;
+    public file_path: string;
+    public title: string;
+    public description: string;
+    public created_at: Date;
+    public deleted_at: Date | null;
 
-    @Column()
-    file_path: string;
-
-    @Column()
-    title: string;
-
-    @Column()
-    description: string;
-
-    @ManyToOne(() => User, (user) => user.videos, { eager: false })
-    @JoinColumn({ name: 'user_id' })
-    user: User;
+    constructor(data: VideoEntity) {
+        this.id = data.id;
+        this.user_id = data.user_id;
+        this.file_path = data.file_path;
+        this.title = data.title;
+        this.created_at = data.created_at;
+        this.deleted_at = data.deleted_at;
+    }
 }

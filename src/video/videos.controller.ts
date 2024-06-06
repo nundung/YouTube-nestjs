@@ -12,8 +12,8 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { CreateVideoDto } from './dto/create-video.dto';
-import { User } from 'src/auth/user.entity';
-import { Video } from './video.entity';
+import { UserEntity } from 'src/auth/user.entity';
+import { VideoEntity } from './video.entity';
 import { VideosService } from './videos.service';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { AuthGuard } from '@nestjs/passport';
@@ -30,23 +30,12 @@ export class VideoController {
 
     @Post('/upload')
     @UsePipes(ValidationPipe)
-    @UseInterceptors(
-        FileInterceptor('file', {
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const ext = path.extname(file.originalname);
-                    const filename = `${Date.now()}${ext}`;
-                    cb(null, filename);
-                },
-            }),
-        }),
-    )
+    @UseInterceptors(FileInterceptor('file'), MulterOption)
     async createVideo(
         @UploadedFile(new FileValidationPipe()) file: Express.Multer.File,
         @Body() createVideoDto: CreateVideoDto,
-        @GetUser() user: User,
-    ): Promise<Video> {
+        @GetUser() user: UserEntity,
+    ): Promise<VideoEntity> {
         const file_path = `/uploads/${file.filename}`;
         createVideoDto.file_path = file_path;
 
@@ -58,12 +47,12 @@ export class VideoController {
     }
 
     @Get()
-    getAllVideos(): Promise<Video[]> {
+    getAllVideos(): Promise<VideoEntity[]> {
         return this.videosService.getAllVideos();
     }
 
     @Get('/:id')
-    getVideoById(@Param('id') id: string): Promise<Video> {
+    getVideoById(@Param('id') id: string): Promise<VideoEntity> {
         return this.videosService.getVideoById(id);
     }
 }

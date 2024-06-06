@@ -9,7 +9,7 @@ import {
 export class FileValidationPipe implements PipeTransform {
     transform(value: any, metadata: ArgumentMetadata) {
         const fiftyMb = 50 * 1024 * 1024;
-        if (value.sixe > fiftyMb) {
+        if (value.size > fiftyMb) {
             throw new BadRequestException(
                 'File size too large. Max size is 50MB.',
             );
@@ -22,7 +22,7 @@ export class FileValidationPipe implements PipeTransform {
             throw new BadRequestException(
                 'Invalid file type. Only video files are allowed.',
             );
-            return true;
         }
+        return value;
     }
 }
