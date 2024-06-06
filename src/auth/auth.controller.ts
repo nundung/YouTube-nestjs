@@ -5,7 +5,6 @@ import {
     Get,
     Post,
     Put,
-    Req,
     UseGuards,
     ValidationPipe,
 } from '@nestjs/common';
@@ -14,7 +13,6 @@ import { GetUser } from './get-user.decorator';
 import { User } from './user.entity';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthService } from './auth.service';
-import { SubscriptionDto } from './dto/subscription.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -44,23 +42,5 @@ export class AuthController {
     @UseGuards(AuthGuard())
     updateMyInfo(@GetUser() user: User) {
         return user;
-    }
-
-    @Post('/subscribe')
-    @UseGuards(AuthGuard())
-    async subscribe(
-        @GetUser() user: User,
-        @Body(ValidationPipe) subscriptionDto: SubscriptionDto,
-    ) {
-        return await this.authService.subscribe(user.id, subscriptionDto);
-    }
-
-    @Delete('/subscribe')
-    @UseGuards(AuthGuard())
-    async unSubscribe(
-        @GetUser() user: User,
-        @Body(ValidationPipe) subscriptionDto: SubscriptionDto,
-    ) {
-        return await this.authService.unSubscribe(user.id, subscriptionDto);
     }
 }
