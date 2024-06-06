@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { VideoController } from './video/videos.controller';
 import { VideosService } from './video/videos.service';
 import { VideosModule } from './video/videos.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeORMConfig } from './config/typeorm.config';
 import { AuthModuleOptions, PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import * as config from 'config';
@@ -12,6 +10,9 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { UserRepository } from './auth/user.repository';
 import { VideoRepository } from './video/video.repository';
+import { subscribe } from 'diagnostics_channel';
+import { SubscribeModule } from './subscribe/subscribe.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 const jwtConfig = config.get('jwt');
 
@@ -22,9 +23,10 @@ const jwtConfig = config.get('jwt');
             secret: process.env.JWT_SECRET || jwtConfig.secret,
             signOptions: { expiresIn: jwtConfig.expiresIn },
         }),
-        TypeOrmModule.forRoot(typeORMConfig),
         AuthModule,
+        SubscribeModule,
         VideosModule,
+        PrismaModule,
     ],
     controllers: [VideoController, AuthController],
     providers: [AuthService, UserRepository, VideoRepository],
