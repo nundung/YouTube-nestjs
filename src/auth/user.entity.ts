@@ -1,14 +1,14 @@
-import { Video } from 'src/video/video.entity';
+import { VideoEntity } from 'src/video/video.entity';
 
-export class User {
+export class UserEntity {
     public id: string;
     public name: string;
     public pw: string;
-    public videos: Video[];
+    public videos: VideoEntity[];
     public created_at: Date;
-    public deleted_at: Date;
+    public deleted_at: Date | null;
 
-    constructor(data: User) {
+    constructor(data: UserEntity) {
         this.id = data.id;
         this.name = data.name;
         this.pw = data.pw;

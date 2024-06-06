@@ -1,7 +1,6 @@
 import {
     Body,
     Controller,
-    Delete,
     Get,
     Post,
     Put,
@@ -10,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthService } from './auth.service';
 
@@ -34,13 +33,13 @@ export class AuthController {
 
     @Get('/info')
     @UseGuards(AuthGuard())
-    getMyInfo(@GetUser() user: User) {
+    getMyInfo(@GetUser() user: UserEntity) {
         return user;
     }
 
     @Put('/info')
     @UseGuards(AuthGuard())
-    updateMyInfo(@GetUser() user: User) {
+    updateMyInfo(@GetUser() user: UserEntity) {
         return user;
     }
 }
