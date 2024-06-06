@@ -1,31 +1,19 @@
 import { Video } from 'src/video/video.entity';
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Unique,
-} from 'typeorm';
 
-@Entity()
-@Unique(['name'])
-export class User extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: string;
+export class User {
+    public id: string;
+    public name: string;
+    public pw: string;
+    public videos: Video[];
+    public created_at: Date;
+    public deleted_at: Date;
 
-    @Column()
-    name: string;
-
-    @Column()
-    pw: string;
-
-    @OneToMany((type) => Video, (video) => video.user, { eager: true })
-    videos: Video[];
-
-    @Column()
-    created_at: Date;
-
-    @Column()
-    deleted_at: Date;
+    constructor(data: User) {
+        this.id = data.id;
+        this.name = data.name;
+        this.pw = data.pw;
+        this.videos = data.videos;
+        this.created_at = data.created_at;
+        this.deleted_at = data.deleted_at;
+    }
 }
