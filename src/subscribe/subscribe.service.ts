@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { SubscriptionDto } from 'src/subscribe/dto/subscription.dto';
 import { SubscribeRepository } from './subscribe.repository';
-import { JwtService } from '@nestjs/jwt';
 import { UnSubscriptionDto } from './dto/unSubscription.dto';
 
 @Injectable()
-export class subscribeService {
-    constructor(
-        private subscribeRepository: SubscribeRepository,
-        private jwtService: JwtService,
-    ) {}
+export class SubscribeService {
+    constructor(private subscribeRepository: SubscribeRepository) {}
     async subscribe(
         id: string,
         subscriptionDto: SubscriptionDto,
@@ -29,8 +25,6 @@ export class subscribeService {
                 userId: id,
                 subscribedUserId: unSubscriptionDto.unSubscribedUserId,
             });
-        return await this.subscribeRepository.unSubscribe({
-            subscribeId: string,
-        });
+        return await this.subscribeRepository.unSubscribe(subscribeId);
     }
 }

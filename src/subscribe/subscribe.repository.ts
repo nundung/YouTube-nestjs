@@ -18,7 +18,7 @@ export class SubscribeRepository {
     async findSubscribeId(
         findSubscriptionDao: FindSubscriptionDao,
     ): Promise<any> {
-        const subscribeId = await prisma.subscription.findUnique({
+        const subscribeId = await prisma.subscription.findFirst({
             where: {
                 user_id: findSubscriptionDao.userId,
                 subscribed_user_id: findSubscriptionDao.subscribedUserId,
