@@ -6,11 +6,13 @@ import {
     InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateUserDao } from './dao/create-user.dao';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UserRepository {
+    constructor(private prisma: PrismaService) {}
     async createUser(createUserDao: CreateUserDao): Promise<void> {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(createUserDao.pw, salt);
