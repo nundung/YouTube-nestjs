@@ -22,6 +22,7 @@ import {
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { EditUserDto } from './dto/edit-user.dto';
 
 @Controller('auth')
 @ApiTags('사용자 API')
@@ -64,7 +65,7 @@ export class AuthController {
         description: 'Unauthorized',
     })
     @UseGuards(AuthGuard())
-    getMyInfo(@GetUser() user: UserEntity) {
+    getMyInfo(@GetUser() user: UserEntity): UserEntity {
         return user;
     }
 
@@ -78,7 +79,10 @@ export class AuthController {
         description: 'Unauthorized',
     })
     @UseGuards(AuthGuard())
-    updateMyInfo(@GetUser() user: UserEntity) {
+    updateMyInfo(
+        @Body(ValidationPipe) editUserDto: EditUserDto,
+        @GetUser() user: UserEntity,
+    ): UserEntity {
         return user;
     }
 }
