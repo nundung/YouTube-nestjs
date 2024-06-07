@@ -21,14 +21,30 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
 import { FileValidationPipe } from './pipes/file-validation.pipe';
+import {
+    ApiCreatedResponse,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller('video')
+@ApiTags('동영상 API')
 @UseGuards(AuthGuard())
 export class VideoController {
     private logger = new Logger('Videos');
     constructor(private videosService: VideosService) {}
 
     @Post('/upload')
+    @ApiOperation({
+        summary: '동영상 업로드 API',
+        description: '동영상 업로드',
+    })
+    @ApiCreatedResponse()
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
     @UsePipes(ValidationPipe)
     //     @UseInterceptors(FileInterceptor('file', MulterOption))
     @UseInterceptors(
@@ -58,11 +74,19 @@ export class VideoController {
     }
 
     @Get()
+    @ApiOperation({
+        summary: '모든 동영상 조회 API',
+        description: '모든 동영상 조회',
+    })
     getAllVideos(): Promise<VideoEntity[]> {
         return this.videosService.getAllVideos();
     }
 
     @Get('/:id')
+    @ApiOperation({
+        summary: '특정 동영상 보기 API',
+        description: '특정 동영상 보기',
+    })
     getVideoById(@Param('id') id: string): Promise<VideoEntity> {
         return this.videosService.getVideoById(id);
     }
