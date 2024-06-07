@@ -41,7 +41,7 @@ export class VideoController {
         summary: '동영상 업로드 API',
         description: '동영상 업로드',
     })
-    @ApiCreatedResponse()
+    @ApiCreatedResponse({ description: '동영상 업로드 성공' })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
