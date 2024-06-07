@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SubscriptionDto } from 'src/channel/dto/subscription.dto';
 import { ChannelRepository } from './channel.repository';
 import { UnSubscriptionDto } from './dto/unSubscription.dto';
+import { SubscriptionEntity } from './subscription.entity';
 
 @Injectable()
 export class ChannelService {
@@ -20,11 +21,12 @@ export class ChannelService {
         id: string,
         unSubscriptionDto: UnSubscriptionDto,
     ): Promise<void> {
-        const subscribeId: string =
+        const subscription: SubscriptionEntity =
             await this.channelRepository.findSubscribeId({
                 userId: id,
                 subscribedUserId: unSubscriptionDto.unSubscribedUserId,
             });
-        return await this.channelRepository.unSubscribe(subscribeId);
+        console.log('sub:', subscription.id);
+        return await this.channelRepository.unSubscribe(subscription.id);
     }
 }
