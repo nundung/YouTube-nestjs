@@ -17,7 +17,7 @@ import { UnSubscriptionDto } from './dto/unSubscription.dto';
 export class ChannelController {
     constructor(private ChannelService: ChannelService) {}
 
-    @Post()
+    @Post('/subscribe')
     @UseGuards(AuthGuard())
     async Channel(
         @GetUser() user: UserEntity,
@@ -26,7 +26,7 @@ export class ChannelController {
         return await this.ChannelService.subscribe(user.id, subscriptionDto);
     }
 
-    @Delete()
+    @Delete('/subscribe')
     @UseGuards(AuthGuard())
     async unChannel(
         @GetUser() user: UserEntity,
