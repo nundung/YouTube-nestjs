@@ -5,7 +5,7 @@ import { FindSubscriptionDao } from './dao/findSubscription.dao';
 const prisma = new PrismaClient();
 
 @Injectable()
-export class SubscribeRepository {
+export class ChannelRepository {
     async subscribe(subscriptionDao: SubscriptionDao): Promise<void> {
         await prisma.subscription.create({
             data: {
