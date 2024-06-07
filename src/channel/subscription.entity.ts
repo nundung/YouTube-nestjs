@@ -1,19 +1,17 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class Subscription extends BaseEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class SubscriptionEntity {
+    public id: string;
+    public user_id: string;
+    public subscribed_user_id: string;
+    public created_at: Date;
+    public deleted_at: Date | null;
 
-    @Column()
-    user_id: string;
-
-    @Column()
-    subscribed_user_id: string;
-
-    @Column()
-    created_at: string;
-
-    @Column()
-    deleted_at: string;
+    constructor(data: SubscriptionEntity) {
+        this.id = data.id;
+        this.user_id = data.user_id;
+        this.subscribed_user_id = data.subscribed_user_id;
+        this.created_at = data.created_at;
+        this.deleted_at = data.deleted_at;
+    }
 }
