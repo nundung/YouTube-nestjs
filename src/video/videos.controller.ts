@@ -30,20 +30,31 @@ export class VideoController {
 
     @Post('/upload')
     @UsePipes(ValidationPipe)
-    @UseInterceptors(FileInterceptor('file'), MulterOption)
+    //     @UseInterceptors(FileInterceptor('file', MulterOption))
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: './uploads',
+                filename: (req, file, cb) => {
+                    const ext = path.extname(file.originalname);
+                    const filename = `${Date.now()}${ext}`;
+                    cb(null, filename);
+                },
+            }),
+        }),
+    )
     async createVideo(
         @UploadedFile(new FileValidationPipe()) file: Express.Multer.File,
         @Body() createVideoDto: CreateVideoDto,
         @GetUser() user: UserEntity,
     ): Promise<VideoEntity> {
         const file_path = `/uploads/${file.filename}`;
-        createVideoDto.file_path = file_path;
 
         this.logger.verbose(
             `User ${user.name} creating a new video. Payload: ${JSON.stringify(createVideoDto)}`,
         );
 
-        return this.videosService.createVideo(createVideoDto, user);
+        return this.videosService.createVideo(createVideoDto, user, file_path);
     }
 
     @Get()

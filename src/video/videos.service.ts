@@ -11,11 +11,12 @@ export class VideosService {
     async createVideo(
         createVideoDto: CreateVideoDto,
         user: UserEntity,
+        file_path,
     ): Promise<VideoEntity> {
         const video = await this.prisma.video.create({
             data: {
                 user_id: user.id,
-                file_path: createVideoDto.file_path,
+                file_path: file_path,
                 title: createVideoDto.title,
                 description: createVideoDto.description,
             },
