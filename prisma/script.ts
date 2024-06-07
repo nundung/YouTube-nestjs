@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
-import { AuthCredentialDto } from 'src/auth/dto/auth-credential.dto';
 
 const prisma = new PrismaClient();
 
