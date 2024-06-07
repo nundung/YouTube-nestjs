@@ -5,7 +5,7 @@ import { FindSubscriptionDao } from './dao/findSubscription.dao';
 const prisma = new PrismaClient();
 
 @Injectable()
-export class SubscribeRepository {
+export class ChannelRepository {
     async subscribe(subscriptionDao: SubscriptionDao): Promise<void> {
         await prisma.subscription.create({
             data: {
@@ -18,13 +18,13 @@ export class SubscribeRepository {
     async findSubscribeId(
         findSubscriptionDao: FindSubscriptionDao,
     ): Promise<any> {
-        const subscribeId = await prisma.subscription.findFirst({
+        const subscriptionId = await prisma.subscription.findFirst({
             where: {
                 user_id: findSubscriptionDao.userId,
                 subscribed_user_id: findSubscriptionDao.subscribedUserId,
             },
         });
-        return subscribeId;
+        return subscriptionId;
     }
 
     async unSubscribe(id: string): Promise<void> {

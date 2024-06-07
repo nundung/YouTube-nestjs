@@ -7,32 +7,32 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { SubscriptionDto } from 'src/subscribe/dto/subscription.dto';
+import { SubscriptionDto } from 'src/channel/dto/subscription.dto';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { UserEntity } from 'src/auth/user.entity';
-import { SubscribeService } from './subscribe.service';
+import { ChannelService } from './channel.service';
 import { UnSubscriptionDto } from './dto/unSubscription.dto';
 
-@Controller('subscribe')
-export class SubscribeController {
-    constructor(private subscribeService: SubscribeService) {}
+@Controller('channel')
+export class ChannelController {
+    constructor(private ChannelService: ChannelService) {}
 
-    @Post()
+    @Post('/subscribe')
     @UseGuards(AuthGuard())
-    async subscribe(
+    async Channel(
         @GetUser() user: UserEntity,
         @Body(ValidationPipe) subscriptionDto: SubscriptionDto,
     ) {
-        return await this.subscribeService.subscribe(user.id, subscriptionDto);
+        return await this.ChannelService.subscribe(user.id, subscriptionDto);
     }
 
-    @Delete()
+    @Delete('/subscribe')
     @UseGuards(AuthGuard())
-    async unSubscribe(
+    async unChannel(
         @GetUser() user: UserEntity,
         @Body(ValidationPipe) unSubscriptionDto: UnSubscriptionDto,
     ) {
-        return await this.subscribeService.unSubscribe(
+        return await this.ChannelService.unSubscribe(
             user.id,
             unSubscriptionDto,
         );
