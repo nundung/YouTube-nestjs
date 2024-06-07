@@ -2,7 +2,7 @@ import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthCredentialDto } from './dto/auth-credential.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,17 +11,17 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
-    async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
+    async signUp(createUserDto: CreateUserDto): Promise<void> {
         return this.userRepository.createUser({
-            name: authCredentialDto.name,
-            pw: authCredentialDto.pw,
+            name: createUserDto.name,
+            pw: createUserDto.pw,
         });
     }
 
     async signIn(
-        authCredentialDto: AuthCredentialDto,
+        createUserDto: CreateUserDto,
     ): Promise<{ accessToken: string }> {
-        const { name, pw } = authCredentialDto;
+        const { name, pw } = createUserDto;
         const user = await this.userRepository.findUserByName(name);
         if (!user || !(await bcrypt.compare(pw, user.pw))) {
             throw new UnauthorizedException('login failed');
