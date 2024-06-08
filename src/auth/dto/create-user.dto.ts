@@ -5,7 +5,7 @@ export class CreateUserDto {
     @IsString()
     @Length(4, 20)
     @ApiProperty({
-        example: 'testId',
+        example: 'testName',
         description: '4-20자',
     })
     name: string;
