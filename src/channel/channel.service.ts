@@ -26,7 +26,6 @@ export class ChannelService {
                 userId: id,
                 subscribedUserId: unSubscriptionDto.unSubscribedUserId,
             });
-        console.log('sub:', subscription.id);
         return await this.channelRepository.unSubscribe(subscription.id);
     }
 }

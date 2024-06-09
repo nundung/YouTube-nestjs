@@ -2,6 +2,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthController } from 'src/auth/auth.controller';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
+import { GetUser } from 'src/auth/get-user.decorator';
 import { UserRepository } from 'src/auth/user.repository';
 
 describe('AuthController', () => {
@@ -17,7 +18,7 @@ describe('AuthController', () => {
         authController = new AuthController(authService);
     });
 
-    it('/POST signup', async () => {
+    it('AuthController.signUp', async () => {
         const createUserDto: CreateUserDto = {
             name: 'testName',
             pw: 'testPW',
@@ -25,7 +26,7 @@ describe('AuthController', () => {
 
         jest.spyOn(authService, 'signUp').mockImplementation();
 
-        const result = await authController.signUp(createUserDto);
-        expect(result).toEqual(['test']);
+        const signUpResult = await authController.signUp(createUserDto);
+        expect(signUpResult).toBeUndefined;
     });
 });
