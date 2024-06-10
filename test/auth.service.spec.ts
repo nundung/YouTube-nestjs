@@ -35,10 +35,27 @@ describe('AuthService', () => {
             name: 'test01',
             pw: 'test01',
         };
-        const signInResult = jest
-            .spyOn(authService, 'signIn')
-            .mockImplementation();
 
-        expect(signInResult).toBeUndefined;
+        // userRepository.findUserByName을 모킹하여 가짜 사용자 반환
+        const user = { name: 'test01', pw: 'hashedPassword' };
+        jest.spyOn(userRepository, 'findUserByName').mockResolvedValue(user);
+
+        // bcrypt.compare 모킹하여 항상 true 반환
+
+        // jwtService.signAsync 모킹하여 가짜 accessToken 반환
+        const fakeAccessToken = 'fakeAccessToken';
+        jest.spyOn(jwtService, 'signAsync').mockResolvedValue(fakeAccessToken);
+
+        // signIn 메서드 호출
+        const result = await authService.signIn(createUserDto);
+
+        // signIn 메서드가 예상대로 작동하는지 확인
+        expect(result).toEqual({ accessToken: fakeAccessToken });
+
+        // jwtService.signAsync이 올바르게 호출되었는지 확인
+        expect(jwtService.signAsync).toHaveBeenCalledWith({ name: user.name });
+
+        // authService.signIn이 호출되었는지 확인
+        expect(authService.signIn).toHaveBeenCalled();
     });
 });
