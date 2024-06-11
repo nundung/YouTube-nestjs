@@ -7,34 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model subscription {
-  id                                         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id                                    String    @db.Uuid
-  subscribed_user_id                         String    @db.Uuid
-  created_at                                 DateTime? @default(now()) @db.Timestamp(6)
-  deleted_at                                 DateTime? @db.Timestamp(6)
-  user_subscription_subscribed_user_idTouser user      @relation("subscription_subscribed_user_idTouser", fields: [subscribed_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_subscription_user_idTouser            user      @relation("subscription_user_idTouser", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Subscription {
+  id                                     String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId                                 String    @map("user_id") @db.Uuid
+  subscribedUserId                       String    @map("subscribed_user_id") @db.Uuid
+  createdAt                              DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt                              DateTime? @map("deleted_at") @db.Timestamp(6)
+  userSubscriptionSubscribedUserIdTouser User      @relation("subscription_subscribed_user_idTouser", fields: [subscribedUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userSubscriptionUserIdTouser           User      @relation("subscription_user_idTouser", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("subscription")
 }
 
-model user {
-  id                                                 String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name                                               String         @unique @db.VarChar(255)
-  pw                                                 String         @db.VarChar(255)
-  created_at                                         DateTime?      @default(now()) @db.Timestamp(6)
-  deleted_at                                         DateTime?      @db.Timestamp(6)
-  subscription_subscription_subscribed_user_idTouser subscription[] @relation("subscription_subscribed_user_idTouser")
-  subscription_subscription_user_idTouser            subscription[] @relation("subscription_user_idTouser")
-  video                                              video[]
+model User {
+  id                                             String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                                           String         @unique @db.VarChar(255)
+  pw                                             String         @db.VarChar(255)
+  createdAt                                      DateTime?      @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt                                      DateTime?      @map("deleted_at") @db.Timestamp(6)
+  subscriptionSubscriptionSubscribedUserIdTouser Subscription[] @relation("subscription_subscribed_user_idTouser")
+  subscriptionSubscriptionUserIdTouser           Subscription[] @relation("subscription_user_idTouser")
+  video                                          Video[]
+
+  @@map("user")
 }
 
-model video {
+model Video {
   id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id     String    @db.Uuid
-  file_path   String    @db.VarChar(255)
+  userId      String    @map("user_id") @db.Uuid
+  filePath    String    @map("file_path") @db.VarChar(255)
   title       String    @db.VarChar(255)
   description String?
-  created_at  DateTime? @default(now()) @db.Timestamp(6)
-  deleted_at  DateTime? @db.Timestamp(6)
-  user        user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamp(6)
+  user        User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("video")
 }
