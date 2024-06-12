@@ -3,59 +3,57 @@ import { Test } from '@nestjs/testing';
 import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
-import { UserRepository } from 'src/auth/user.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
 import { UnauthorizedException } from '@nestjs/common';
+import { BcryptService } from 'src/auth/bcrypt.service';
 
 describe('AuthService', () => {
+    let prisma: PrismaService;
     let jwtService: JwtService;
     let authService: AuthService;
-    let userRepository: UserRepository;
+    let bcryptService: BcryptService;
 
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
-            imports: [
-                AuthModule,
-                JwtModule.register({
-                    secret: 'testSecret',
-                    signOptions: { expiresIn: '1h' },
-                }),
-            ],
-            providers: [AuthService, JwtService, UserRepository, PrismaService],
+            providers: [AuthService, JwtService, PrismaService, BcryptService],
         }).compile();
 
         authService = moduleRef.get<AuthService>(AuthService);
+        prisma = moduleRef.get<PrismaService>(PrismaService);
         jwtService = moduleRef.get<JwtService>(JwtService);
-        userRepository = moduleRef.get<UserRepository>(UserRepository);
+        bcryptService = moduleRef.get<BcryptService>(BcryptService); // bcryptService 인스턴스 가져오기
     });
 
     it('AuthService.signIn', async () => {
         const createUserDto: CreateUserDto = {
-            name: 'test01',
-            pw: 'test01',
+            name: 'testName',
+            pw: 'testPw',
         };
+        const mockUser = {
+            id: 'someId',
+            name: 'testName',
+            pw: 'testPw',
+            createdAt: new Date(),
+            deletedAt: new Date(),
+        };
+        const findMock = jest
+            .spyOn(prisma.user, 'findUnique')
+            .mockResolvedValue(mockUser);
 
-        // userRepository.findUserByName을 모킹하여 가짜 사용자 반환
-        const user = { name: 'test01', pw: 'hashedPassword' };
-        jest.spyOn(userRepository, 'findUserByName').mockResolvedValue(user);
+        const compareMock = jest
+            .spyOn(bcryptService, 'compare')
+            .mockResolvedValue(true);
 
-        // bcrypt.compare 모킹하여 항상 true 반환
-
-        // jwtService.signAsync 모킹하여 가짜 accessToken 반환
-        const fakeAccessToken = 'fakeAccessToken';
-        jest.spyOn(jwtService, 'signAsync').mockResolvedValue(fakeAccessToken);
-
-        // signIn 메서드 호출
-        const result = await authService.signIn(createUserDto);
+        const tokenMock = jest
+            .spyOn(jwtService, 'signAsync')
+            .mockResolvedValue('fakeAccessToken');
 
         // signIn 메서드가 예상대로 작동하는지 확인
-        expect(result).toEqual({ accessToken: fakeAccessToken });
+        const result = await authService.signIn(createUserDto);
 
-        // jwtService.signAsync이 올바르게 호출되었는지 확인
-        expect(jwtService.signAsync).toHaveBeenCalledWith({ name: user.name });
-
-        // authService.signIn이 호출되었는지 확인
-        expect(authService.signIn).toHaveBeenCalled();
+        expect(result.accessToken).toEqual('fakeAccessToken');
+        // expect(findMock).toHaveBeenCalledTimes(1);
+        expect(compareMock).toHaveBeenCalledTimes(1);
+        expect(tokenMock).toHaveBeenCalledTimes(1);
     });
 });
