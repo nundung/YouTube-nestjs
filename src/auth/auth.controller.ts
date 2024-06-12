@@ -13,10 +13,8 @@ import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 import {
-    ApiBadRequestResponse,
     ApiConflictResponse,
     ApiCreatedResponse,
-    ApiNotFoundResponse,
     ApiOkResponse,
     ApiOperation,
     ApiTags,
