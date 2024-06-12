@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UserRepository } from './user.repository';
+// import { UserRepository } from './user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import * as config from 'config';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { BcryptService } from './bcrypt.service';
 
 const jwtConfig = config.get('jwt');
 
@@ -20,8 +20,7 @@ const jwtConfig = config.get('jwt');
             signOptions: { expiresIn: jwtConfig.expiresIn },
         }),
     ],
+    providers: [BcryptService, AuthService, JwtStrategy],
     controllers: [AuthController],
-    exports: [JwtStrategy, PassportModule, UserRepository, AuthService],
-    providers: [AuthService, JwtStrategy, UserRepository],
 })
 export class AuthModule {}

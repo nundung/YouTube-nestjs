@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ChannelRepository } from './channel.repository';
 import { ChannelController } from './channel.controller';
 import { ChannelService } from './channel.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
@@ -20,6 +19,6 @@ const jwtConfig = config.get('jwt');
     ],
     controllers: [ChannelController],
     exports: [ChannelService],
-    providers: [ChannelService, ChannelRepository],
+    providers: [ChannelService],
 })
 export class ChannelModule {}
