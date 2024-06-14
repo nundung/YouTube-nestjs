@@ -8,39 +8,75 @@ datasource db {
 }
 
 model Subscription {
-  id                                     String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  userId                                 String    @map("user_id") @db.Uuid
-  subscribedUserId                       String    @map("subscribed_user_id") @db.Uuid
-  createdAt                              DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
-  deletedAt                              DateTime? @map("deleted_at") @db.Timestamp(6)
-  userSubscriptionSubscribedUserIdTouser User      @relation("subscription_subscribed_user_idTouser", fields: [subscribedUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userSubscriptionUserIdTouser           User      @relation("subscription_user_idTouser", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  idx               String    @id @db.Uuid
+  userIdx           String    @map("user_idx") @db.Uuid
+  subscribedUserIdx String    @map("subscribed_user_idx") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
 
   @@map("subscription")
 }
 
 model User {
-  id                                             String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name                                           String         @unique @db.VarChar(255)
-  pw                                             String         @db.VarChar(255)
-  createdAt                                      DateTime?      @default(now()) @map("created_at") @db.Timestamp(6)
-  deletedAt                                      DateTime?      @map("deleted_at") @db.Timestamp(6)
-  subscriptionSubscriptionSubscribedUserIdTouser Subscription[] @relation("subscription_subscribed_user_idTouser")
-  subscriptionSubscriptionUserIdTouser           Subscription[] @relation("subscription_user_idTouser")
-  video                                          Video[]
+  idx       String    @id @db.Uuid
+  id        String    @db.VarChar
+  name      String    @db.VarChar
+  email     String?   @db.VarChar
+  pw        String?   @db.VarChar
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
+  comment   Comment[]
+  video     Video[]
 
   @@map("user")
 }
 
 model Video {
-  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  userId      String    @map("user_id") @db.Uuid
-  filePath    String    @map("file_path") @db.VarChar(255)
-  title       String    @db.VarChar(255)
-  description String?
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
-  deletedAt   DateTime? @map("deleted_at") @db.Timestamp(6)
-  user        User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  idx          String         @id @db.Uuid
+  userIdx      String         @map("user_idx") @db.Uuid
+  title        String         @db.VarChar
+  description  String
+  filePath     String?        @map("file_path") @db.VarChar
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt    DateTime?      @map("deleted_at") @db.Timestamp(6)
+  comment      Comment[]
+  notification Notification[]
+  user         User           @relation(fields: [userIdx], references: [idx], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_to_video")
+  view         View[]
 
   @@map("video")
+}
+
+model Comment {
+  idx         String    @id @db.Uuid
+  userIdx     String    @map("user_idx") @db.Uuid
+  postIdx     String    @map("post_idx") @db.Uuid
+  description String
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamp(6)
+  user        User      @relation(fields: [userIdx], references: [idx], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_to_comment")
+  video       Video     @relation(fields: [postIdx], references: [idx], onDelete: NoAction, onUpdate: NoAction, map: "fk_video_to_comment")
+
+  @@map("comment")
+}
+
+model Notification {
+  idx       String    @id @db.Uuid
+  userIdx   String    @map("user_idx") @db.Uuid
+  videoIdx  String?   @map("video_idx") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
+  video     Video?    @relation(fields: [videoIdx], references: [idx], onDelete: NoAction, onUpdate: NoAction, map: "fk_video_to_notification")
+
+  @@map("notification")
+}
+
+model View {
+  idx       String   @id @db.Uuid
+  videoIdx  String   @map("video_idx") @db.Uuid
+  createdAt DateTime @map("created_at") @db.Timestamp(6)
+  count     Int?
+  video     Video    @relation(fields: [videoIdx], references: [idx], onDelete: NoAction, onUpdate: NoAction, map: "fk_video_to_view")
+
+  @@map("view")
 }
